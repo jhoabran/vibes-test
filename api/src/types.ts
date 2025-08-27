@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { QueryParams } from "../../shared/types";
 
-// schema for query params
-
+// Zod schema for runtime validation
+// This ensures the parsed query matches our shared QueryParams type
 export const querySchema = z.object({
     search: z.string().optional(),
     sort: z.enum(['price', 'name']).optional(),
@@ -14,4 +15,4 @@ export const querySchema = z.object({
         if (val === '1' || val === 'true') return true;
         return undefined;
     }),
-});
+}) satisfies z.ZodType<QueryParams>;

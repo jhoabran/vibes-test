@@ -1,11 +1,13 @@
 import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
 import { querySchema } from "./types";
+import { Product, ProductsResponse } from "../../shared/types";
+
 export const productsRouter = Router();
 
 // GET /api/products
 
-productsRouter.get('/', async (req, res, next) => {
+productsRouter.get('/', async (req, res) => {
 
     const { search, sort, order, limit, page, available } = querySchema.parse(req.query);
 
@@ -33,7 +35,29 @@ productsRouter.get('/', async (req, res, next) => {
             },
         });
 
-        res.json({ total: products.length, page, limit, products });
+        const totalCount = await db.product.count({
+            where: {
+                AND: [
+                    search
+                        ? {
+                            OR: [
+                                { name: { contains: search, mode: "insensitive" } },
+                                { category: { contains: search, mode: "insensitive" } }
+                            ]
+                        }
+                        : {},
+                    available !== undefined ? { isAvailable: available } : {}
+                ]
+            }
+        });
+
+        const response: ProductsResponse = {
+            total: totalCount,
+            page,
+            limit,
+            products: products as Product[]
+        };
+        res.json(response);
     } catch (error) {
         res.status(500).json({ error: 'Internal server error', message: (error as Error).message });
     }
@@ -50,7 +74,7 @@ productsRouter.get('/:id', async (req, res) => {
             res.status(404).json({ error: 'Product not found' });
             return;
         }
-        res.json(product);
+        res.json(product as Product);
     } catch (error) {
         res.status(500).json({ error: 'Internal server error', message: (error as Error).message });
     }
