@@ -25,24 +25,24 @@ export function Card({ product }: { product: Product }) {
       </div>
 
       <div className="p-4">
-        <h3 className="font-semibold text-gray-800 group-hover:text-black-600 transition-colors">
+        <h3 className="text-base font-semibold text-gray-800 group-hover:text-black transition-colors mb-2">
           {product.name}
         </h3>
         <p className="text-sm text-gray-500 capitalize mb-2">
           {product.category}
         </p>
         <div className="flex justify-between items-center">
-          <span className="text-lg font-bold text-black-600 text-black">
+          <span className="text-sm font-medium text-gray-900">
             ${product.price.toFixed(2)}
           </span>
           <span
-            className={`text-sm px-2 py-1 rounded-full ${
+            className={`text-xs px-2 py-1 rounded-full font-medium ${
               product.isAvailable
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
+                ? "bg-green-100 text-green-700"
+                : "bg-gray-100 text-gray-600"
             }`}
           >
-            {product.isAvailable ? "Available" : "Out of Stock"}
+            {product.isAvailable ? "En stock" : "Sin stock"}
           </span>
         </div>
       </div>
