@@ -35,8 +35,24 @@ productsRouter.get('/', async (req, res) => {
             },
         });
 
+        const totalCount = await db.product.count({
+            where: {
+                AND: [
+                    search
+                        ? {
+                            OR: [
+                                { name: { contains: search, mode: "insensitive" } },
+                                { category: { contains: search, mode: "insensitive" } }
+                            ]
+                        }
+                        : {},
+                    available !== undefined ? { isAvailable: available } : {}
+                ]
+            }
+        });
+
         const response: ProductsResponse = {
-            total: products.length,
+            total: totalCount,
             page,
             limit,
             products: products as Product[]
