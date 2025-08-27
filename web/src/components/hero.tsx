@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function Hero() {
   return (
-    <div className="flex flex-col items-center justify-center h-96 w-full bg-gradient-to-r from-black to-pink-600 relative overflow-hidden border-b-2 rounded-b-4xl ">
+    <div className="flex flex-col items-center justify-center h-96 w-full bg-gradient-to-r from-black to-gray-600 relative overflow-hidden border-b-2 rounded-b-4xl ">
       {/* Navigation */}
       <nav className="absolute top-6 left-0 right-0 flex justify-between items-center px-8 z-10">
         <Link

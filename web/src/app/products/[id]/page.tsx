@@ -144,7 +144,7 @@ export default function ProductDetailPage() {
               {/* Actions */}
               <div className="space-y-4">
                 <button className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 transition-colors">
-                  Agregar a favoritos
+                  Buy
                 </button>
               </div>
             </div>
