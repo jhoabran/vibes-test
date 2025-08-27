@@ -1,3 +1,5 @@
+// products dummy data
+
 export const products = [
     {
         name: 'Guantes GN102',

@@ -9,7 +9,7 @@ async function seed() {
 
     console.log('Connected to database');
 
-    // Clear existing data (now works with replica set)
+    // Clear existing data
     await db.product.deleteMany();
     console.log('Cleared existing products');
 
