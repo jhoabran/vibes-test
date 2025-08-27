@@ -6,6 +6,7 @@ import { getProducts } from "@/lib/api";
 import { Product, QueryParams } from "../../../../shared/types";
 import { Navbar } from "@/components/navbar";
 import { Card } from "@/components/card";
+import { getTopCheapestAvailableProducts } from "@/lib/utils";
 
 export default function ProductsPage({
   searchParams,
@@ -70,7 +71,12 @@ export default function ProductsPage({
       };
 
       const response = await getProducts(queryParams);
-      console.log(response.total);
+      const allProducts = await getProducts({ limit: 100 });
+      const topCheapestAvailableProducts = getTopCheapestAvailableProducts(
+        allProducts.products,
+        3
+      );
+      console.log(topCheapestAvailableProducts);
       setProducts(response.products);
       setTotalProducts(response.total);
     } catch (err) {

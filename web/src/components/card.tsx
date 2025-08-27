@@ -42,7 +42,7 @@ export function Card({ product }: { product: Product }) {
                 : "bg-gray-100 text-gray-600"
             }`}
           >
-            {product.isAvailable ? "En stock" : "Sin stock"}
+            {product.isAvailable ? "In Stock" : "Out of Stock"}
           </span>
         </div>
       </div>
