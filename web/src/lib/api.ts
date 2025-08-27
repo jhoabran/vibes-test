@@ -5,7 +5,7 @@ export const getProducts = async (queryParams: QueryParams): Promise<ProductsRes
     const searchParams = queryParams.search ? `search=${queryParams.search}` : "";
     const sort = queryParams.sort ? `sort=${queryParams.sort}` : "";
     const order = queryParams.order ? `order=${queryParams.order}` : "";
-    const available = queryParams.available ? `available=${queryParams.available}` : "";
+    const available = queryParams.available !== undefined ? `available=${queryParams.available}` : "";
     const limit = queryParams.limit ? `limit=${queryParams.limit}` : "";
     const page = queryParams.page ? `page=${queryParams.page}` : "";
 

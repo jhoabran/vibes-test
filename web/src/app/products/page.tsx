@@ -1,45 +1,81 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { getProducts } from "@/lib/api";
 import { Product, QueryParams } from "../../../../shared/types";
-import { Hero } from "@/components/hero";
 import Image from "next/image";
 import { Navbar } from "@/components/navbar";
 
 export default function ProductsPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
+  const resolvedSearchParams = use(searchParams);
+  const router = useRouter();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [search, setSearch] = useState(searchParams.search || "");
-  const [sort, setSort] = useState<"price" | "name">("name");
-  const [order, setOrder] = useState<"asc" | "desc">("asc");
-  const [availableFilter, setAvailableFilter] = useState<boolean | undefined>(
-    undefined
+  const [search, setSearch] = useState(resolvedSearchParams.search || "");
+  const [sort, setSort] = useState<"price" | "name">(
+    (resolvedSearchParams.sort as "price" | "name") || "name"
   );
+  const [order, setOrder] = useState<"asc" | "desc">(
+    (resolvedSearchParams.order as "asc" | "desc") || "asc"
+  );
+  const [availableFilter, setAvailableFilter] = useState<boolean | undefined>(
+    resolvedSearchParams.available
+      ? resolvedSearchParams.available === "1"
+      : undefined
+  );
+  const [currentPage, setCurrentPage] = useState(
+    parseInt(resolvedSearchParams.page || "0")
+  );
+  const [totalProducts, setTotalProducts] = useState(0);
+  const limit = 8;
+
+  const updateURL = () => {
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
+    if (sort !== "name") params.set("sort", sort);
+    if (order !== "asc") params.set("order", order);
+    if (availableFilter !== undefined)
+      params.set("available", availableFilter ? "1" : "0");
+    if (currentPage !== 0) params.set("page", currentPage.toString());
+
+    router.push(`/products?${params.toString()}`);
+  };
 
   useEffect(() => {
-    fetchProducts();
+    setCurrentPage(0);
   }, [search, sort, order, availableFilter]);
+
+  useEffect(() => {
+    updateURL();
+    fetchProducts();
+  }, [search, sort, order, availableFilter, currentPage]);
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
+
+      console.log(availableFilter);
       const queryParams: QueryParams = {
         search: search || undefined,
         sort,
         order,
         available: availableFilter,
-        limit: 10,
+        limit,
+        page: currentPage,
       };
 
       const response = await getProducts(queryParams);
+      console.log(response.total);
       setProducts(response.products);
+      setTotalProducts(response.total);
     } catch (err) {
       setError("Failed to load products");
       console.error(err);
@@ -95,7 +131,7 @@ export default function ProductsPage({
               onChange={(e) => {
                 const value = e.target.value;
                 setAvailableFilter(
-                  value === "all" ? undefined : value === "true"
+                  value === "all" ? undefined : value === "true" ? true : false
                 );
               }}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black-500 text-black"
@@ -125,7 +161,11 @@ export default function ProductsPage({
         ) : (
           <>
             <div className="mb-6">
-              <p className="text-gray-600">{products.length} products found</p>
+              <p className="text-gray-600">
+                Showing {currentPage * limit + 1}-
+                {Math.min(currentPage * limit + products.length, totalProducts)}{" "}
+                of {totalProducts} products
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -160,7 +200,7 @@ export default function ProductsPage({
                       {product.category}
                     </p>
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-bold text-black-600">
+                      <span className="text-lg font-bold text-black-600 text-black">
                         ${product.price.toFixed(2)}
                       </span>
                       <span
@@ -177,6 +217,31 @@ export default function ProductsPage({
                 </Link>
               ))}
             </div>
+
+            {/* Pagination */}
+            {totalProducts > limit && (
+              <div className="flex justify-center items-center mt-8 gap-4">
+                <button
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={currentPage === 0}
+                  className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 text-black"
+                >
+                  Previous
+                </button>
+
+                <span className="text-gray-600">
+                  Page {currentPage + 1} of {Math.ceil(totalProducts / limit)}
+                </span>
+
+                <button
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={currentPage >= Math.ceil(totalProducts / limit) - 1}
+                  className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 text-black"
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>
