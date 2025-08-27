@@ -61,8 +61,6 @@ export default function ProductsPage({
   const fetchProducts = async () => {
     try {
       setLoading(true);
-
-      console.log(availableFilter);
       const queryParams: QueryParams = {
         search: search || undefined,
         sort,
