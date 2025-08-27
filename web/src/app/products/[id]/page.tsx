@@ -87,19 +87,19 @@ export default function ProductDetailPage() {
 
             {/* Product Info */}
             <div className="p-8">
-              <h1 className="text-4xl font-bold text-gray-800 mb-4">
+              <h1 className="text-xl font-semibold text-gray-800 mb-4">
                 {product.name}
               </h1>
 
               <div className="flex items-center gap-4 mb-6">
-                <span className="text-3xl font-bold text-black">
+                <span className="text-lg font-bold text-gray-900">
                   ${product.price.toFixed(2)}
                 </span>
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-medium ${
                     product.isAvailable
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-gray-600"
                   }`}
                 >
                   {product.isAvailable ? "In Stock" : "Out of Stock"}
@@ -143,18 +143,9 @@ export default function ProductDetailPage() {
 
               {/* Actions */}
               <div className="space-y-4">
-                {product.isAvailable ? (
-                  <button className="w-full bg-black text-white py-3 px-6 rounded-lg font-semibold hover:bg-black transition-colors hover:cursor-pointer">
-                    Add to Cart
-                  </button>
-                ) : (
-                  <button
-                    className="w-full bg-gray-400 text-white py-3 px-6 rounded-lg font-semibold cursor-not-allowed"
-                    disabled
-                  >
-                    Out of Stock
-                  </button>
-                )}
+                <button className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 transition-colors">
+                  Agregar a favoritos
+                </button>
               </div>
             </div>
           </div>

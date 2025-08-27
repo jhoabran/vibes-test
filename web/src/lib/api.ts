@@ -10,11 +10,11 @@ export const getProducts = async (queryParams: QueryParams): Promise<ProductsRes
     const page = queryParams.page ? `page=${queryParams.page}` : "";
 
     const url = `${process.env.NEXT_PUBLIC_API_URL}/api/products?${searchParams}&${sort}&${order}&${available}&${limit}&${page}`;
-    console.log(url);
+
     try {
         const response = await fetch(url);
         const data = await response.json();
-        console.log(data);
+
         return data;
     } catch (error) {
         console.error('Error fetching products:', error);
